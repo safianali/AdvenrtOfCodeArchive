@@ -8,33 +8,22 @@ with open("10.txt") as f:
 
 # part 1
 
-# def matchingChars(char1, char2):
-#     if char1 == '(':
-#         return char2 == ')'
-#     if char1 == '[':
-#         return char2 == ')'
-#     if char1 == '{':
-#         return char2 == '>'
-#     if char1 == '<':
-#         return char2 == '>'
-
 closingCharScores = {')': 3, ']': 57, '}': 1197, '>': 25137}
 closingCharMatches = {')': '(', ']': '[', '}': '{', '>': '<'}
 totalError = 0
 for line in rawInput:
     i = 0
-    corruptCharFound = False
     stack = []
 
-    while (i < len(line)) and not corruptCharFound:
+    while i < len(line):
         curChar = line[i]
 
         if curChar in closingCharMatches:
             if stack and (stack[-1] == closingCharMatches[curChar]):
                 stack.pop()
             else:
-                corruptCharFound = True
                 totalError += closingCharScores[curChar]
+                break
         else:
             stack.append(curChar)
 
@@ -67,7 +56,7 @@ for line in rawInput:
     if not corruptCharFound:
         incompleteStacks.append(stack[::-1])
 
-openingCharMatches = inv_map = {v: k for k, v in closingCharMatches.items()}
+openingCharMatches = {v: k for k, v in closingCharMatches.items()}
 closingChars = []
 for stack in incompleteStacks:
     closingChars.append([openingCharMatches[x] for x in stack])
