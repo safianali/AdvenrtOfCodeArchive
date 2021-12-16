@@ -74,6 +74,10 @@ class Packet:
         return self.literalValue
 
 
+def popLeftXTimes(X):
+    return ''.join([binaryQ.popleft() for _ in range(X)])
+
+
 binaryQ = deque()
 
 for char in rawInput[0]:
@@ -81,45 +85,34 @@ for char in rawInput[0]:
     for bit in next4Bits:
         binaryQ.append(bit)
 
-versionSum = 0
-
 
 def parsePacket():
-    version = int(binaryQ.popleft() + binaryQ.popleft() + binaryQ.popleft(), 2)
-    global versionSum
-    versionSum += version
-
-    typeID = int(binaryQ.popleft() + binaryQ.popleft() + binaryQ.popleft(), 2)
+    versionSum = version = int(popLeftXTimes(3), 2)
+    typeID = int(popLeftXTimes(3), 2)
 
     packet = Packet(version, typeID)
 
-    if (typeID != 4):
+    if typeID != 4:
         lengthTypeID = int(binaryQ.popleft(), 2)
         if lengthTypeID:
-            numPackets = int(binaryQ.popleft() + binaryQ.popleft() + binaryQ.popleft()
-                             + binaryQ.popleft() + binaryQ.popleft() + binaryQ.popleft()
-                             + binaryQ.popleft() + binaryQ.popleft() + binaryQ.popleft()
-                             + binaryQ.popleft() + binaryQ.popleft(), 2)
+            numPackets = int(popLeftXTimes(11), 2)
             packet.setOperatorWithNumPackets()
 
             for _ in range(numPackets):
-                packet.addSubPacket(parsePacket())
-
-
+                nextPacket, nextVersion = parsePacket()
+                packet.addSubPacket(nextPacket)
+                versionSum += nextVersion
 
         else:
-            length = int(binaryQ.popleft() + binaryQ.popleft() + binaryQ.popleft()
-                         + binaryQ.popleft() + binaryQ.popleft() + binaryQ.popleft()
-                         + binaryQ.popleft() + binaryQ.popleft() + binaryQ.popleft()
-                         + binaryQ.popleft() + binaryQ.popleft() + binaryQ.popleft()
-                         + binaryQ.popleft() + binaryQ.popleft() + binaryQ.popleft(), 2)
+            length = int(popLeftXTimes(15), 2)
 
             packet.setOperatorWithLength()
 
             bitsSoFar = 0
 
             while bitsSoFar < length:
-                nextPacket = parsePacket()
+                nextPacket, nextVersion = parsePacket()
+                versionSum += nextVersion
                 bitsSoFar += nextPacket.getBitsUsed()
                 packet.addSubPacket(nextPacket)
     else:
@@ -127,27 +120,27 @@ def parsePacket():
         nextStartBit = binaryQ.popleft()
         bitsUsed = 1
 
-        while (nextStartBit == '1'):
-            binaryString += binaryQ.popleft() + binaryQ.popleft() + binaryQ.popleft() + binaryQ.popleft()
+        while nextStartBit == '1':
+            binaryString += popLeftXTimes(4)
             nextStartBit = binaryQ.popleft()
             bitsUsed += 5
 
-        binaryString += binaryQ.popleft() + binaryQ.popleft() + binaryQ.popleft() + binaryQ.popleft()
+        binaryString += popLeftXTimes(4)
         bitsUsed += 4
 
         val = int(binaryString, 2)
         packet.setLiteralValue(val, bitsUsed)
 
-    return packet
+    return packet, versionSum
 
 
-packet = parsePacket()
+packet, versionSum = parsePacket()
 print("Part 1:", versionSum)
+
 
 # part 2
 
 def calculateValue(packet):
-
     match packet.getTypeID():
         case 0:
             return sum(calculateValue(p) for p in packet.getSubPackets())
@@ -165,6 +158,7 @@ def calculateValue(packet):
             return 1 if calculateValue(packet.getSubPackets()[0]) < calculateValue(packet.getSubPackets()[1]) else 0
         case 7:
             return 1 if calculateValue(packet.getSubPackets()[0]) == calculateValue(packet.getSubPackets()[1]) else 0
+
 
 print("Part 2:", calculateValue(packet))
 
