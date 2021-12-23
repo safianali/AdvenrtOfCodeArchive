@@ -34,13 +34,13 @@ def getScannerPos(v1, v2, b1, b2):
 
     return tuple(map(add, b1, b2Rel)), pos, tuple(-i for i in signs)
 
+
 def changeVector(v, pos, signs):
     newV0 = v[pos[0]] * signs[0]
     newV1 = v[pos[1]] * signs[1]
     newV2 = v[pos[2]] * signs[2]
 
     return (newV0, newV1, newV2)
-
 
 
 class Beacon:
@@ -131,6 +131,7 @@ def mergeScanners(s1, s2, relPos, pos, signs):
         newBeacons.add(Beacon(*newBeaconPos))
 
     s1.addBeaconSet(newBeacons)
+
 
 scannerPositions = set()
 
