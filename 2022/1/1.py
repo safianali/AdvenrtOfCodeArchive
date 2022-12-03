@@ -27,7 +27,7 @@ for item in rawInput:
         if curElfCals > top3Cals[0]:
             top3Cals = [curElfCals] + top3Cals[0:2]
         elif curElfCals > top3Cals[1]:
-            top3Cals = [top3Cals[0]] + [curElfCals] + [top3Cals[2]]
+            top3Cals = [top3Cals[0]] + [curElfCals] + [top3Cals[1]]
         elif curElfCals > top3Cals[2]:
             top3Cals = top3Cals[0:2] + [curElfCals]
 
