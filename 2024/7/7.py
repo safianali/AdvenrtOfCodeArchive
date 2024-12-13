@@ -14,10 +14,9 @@ for line in rawInput:
     processed_lines.append(numbers)
 
 def getBinaryPermutations(length):
-    width = len(line) - 1
     nums = []
-    for i in range(2 ** width):
-        nums.append(bin(i)[2:].zfill(width))
+    for i in range(2 ** length):
+        nums.append(bin(i)[2:].zfill(length))
     
     return nums
 
@@ -53,10 +52,9 @@ def ter(decimal):
     return ternary
 
 def getTernaryPermutations(length):
-    width = len(line) - 1
     nums = []
-    for i in range(3 ** width):
-        nums.append(ter(i).zfill(width))
+    for i in range(3 ** length):
+        nums.append(ter(i).zfill(length))
     
     return nums
 
